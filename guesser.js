@@ -1,5 +1,35 @@
 currRow = 0
 currCol = 0
+tileStates = [
+    [-1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1]
+];
+
+function tileClick(id) {
+
+    // Only allow if we are on the current row
+    if(currRow == id.substring(0,1)) {
+
+        tileStates[id.substring(0,1)][id.substring(1)] = (1 + tileStates[id.substring(0,1)][id.substring(1)]) % 3
+        var newColor = tileStates[id.substring(0,1)][id.substring(1)];
+        $(`#${id}`).removeClass("black grey yellow green");
+
+        if(newColor == 0) {
+            $(`#${id}`).addClass("grey");
+        }
+        else if(newColor == 1) {
+            $(`#${id}`).addClass("yellow");
+        }
+        else {
+            $(`#${id}`).addClass("green");
+        }
+    }
+
+}
 
 document.addEventListener("keydown", function(e) {
     key = e.key;

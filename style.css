@@ -40,3 +40,18 @@ div.row {
   justify-content: space-between;
   align-items:center;
 }
+
+div.grey {
+  background-color: #3A3A3C;
+  border: none;
+}
+
+div.yellow {
+  background-color: #B59F3B;
+  border: none;
+}
+
+div.green {
+  background-color: #538D4E;
+  border: none;
+}
