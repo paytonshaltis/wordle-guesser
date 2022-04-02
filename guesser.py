@@ -1,3 +1,4 @@
+import json
 '''Returns a list of all Wordle word possibilities.'''
 def getWords(words) -> list:
 
@@ -9,8 +10,14 @@ def getWords(words) -> list:
     for i in range(len(words)):
         words[i] = words[i][0:-1].upper()
 
+
+    with open('bozo.json', 'w') as fp:
+        json.dump(words, fp)
+        
     # Returns the newly assigned list of words.
     return words
+
+    
 
 
 

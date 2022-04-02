@@ -1,3 +1,8 @@
+
+// Global variables.
+correct_positions   = ['', '', '', '', ''];
+incorrect_positions = [[], [], [], [], []];
+contains_letters    = [];
 currRow = 0
 currCol = 0
 tileStates = [
@@ -9,6 +14,8 @@ tileStates = [
     [-1, -1, -1, -1, -1]
 ];
 
+// This function is called whenever a tile is clicked. It attempts to toggle
+// the current tile color if the row is currently editable.
 function tileClick(id) {
 
     // Only allow if we are on the current row
@@ -27,19 +34,19 @@ function tileClick(id) {
         else {
             $(`#${id}`).addClass("green");
         }
+
     }
 
 }
 
+// Event handler for any user key press.
 document.addEventListener("keydown", function(e) {
     key = e.key;
 
-    console.log(`#${currRow}${currCol}`)
     // Handles typing of letters.
     if(key.charCodeAt(0) >= 97 && key.charCodeAt(0) <= 122) {
         
         if(currCol <= 4) {
-            console.log(`#${currRow}${currCol}`)
             $(`#${currRow}${currCol}`).text(key.toUpperCase());
             currCol += 1;
         }
@@ -66,3 +73,121 @@ document.addEventListener("keydown", function(e) {
     }
 
 });
+
+window.onload = function() {
+    makeGuess('RATES', '10110', correct_positions, incorrect_positions, contains_letters);
+    filterWords(words, correct_positions, incorrect_positions, contains_letters);
+    console.log(words);
+    console.log(getRankings(words));
+};
+
+// Updates arrays based on the guess provided.
+function makeGuess(guess, guess_outcome, correct_positions, incorrect_positions, contains_letters) {
+    
+    // Loop through each letter of the guess.
+    for(i = 0; i < guess.length; i++) {
+
+        // If the letter is gray...
+        if(guess_outcome[i] == 0) {
+            
+            // Only rule it out of other non-green positions.
+            if(correct_positions[0] != guess[i])
+                incorrect_positions[0].push(guess[i]);
+            if(correct_positions[1] != guess[i])
+                incorrect_positions[1].push(guess[i]);
+            if(correct_positions[2] != guess[i])
+                incorrect_positions[2].push(guess[i]);
+            if(correct_positions[3] != guess[i])
+                incorrect_positions[3].push(guess[i]);
+            if(correct_positions[4] != guess[i])
+                incorrect_positions[4].push(guess[i]);
+        }
+
+        // If the letter is yellow...
+        else if(guess_outcome[i] == 1) {
+            incorrect_positions[i].push(guess[i]);
+            contains_letters.push(guess[i]);
+        }
+
+        // If the letter is green...
+        else {
+            correct_positions[i] = guess[i];
+        }
+            
+    }
+ 
+}
+
+// Filters the list of words to only contain remaining possibilities.
+function filterWords(words, correct_positions, incorrect_positions, contains_letters) {
+
+    marked = [];
+    for(i = 0; i < words.length; i++) {
+        
+        // If they are missing a required letter...
+        if((correct_positions[0] != '' && words[i][0] != correct_positions[0]) || (correct_positions[1] != '' && words[i][1] != correct_positions[1]) || (correct_positions[2] != '' && words[i][2] != correct_positions[2]) || (correct_positions[3] != '' && words[i][3] != correct_positions[3]) || (correct_positions[4] != '' && words[i][4] != correct_positions[4])) {
+            marked.push(words[i]);
+            console.log("1", words[i]);
+        }
+
+        // If they contain a letter in an incorrect position...
+        if((incorrect_positions[0].includes(words[i][0])) || (incorrect_positions[1].includes(words[i][1])) || (incorrect_positions[2].includes(words[i][2])) || (incorrect_positions[3].includes(words[i][3])) || (incorrect_positions[4].includes(words[i][4]))) {
+            marked.push(words[i]);
+            console.log("2", words[i]);
+        }
+
+        // If the word does not contain all of the correct letters...
+        for(j = 0; j < contains_letters.length; j++) {
+            if(words[i].includes(contains_letters[j]) == false) {
+                marked.push(words[i]);
+                console.log("3", words[i]);
+            }
+        }
+    }
+
+    // Remove the marked words for deletion.
+    for(i = 0; i < marked.length; i++) {
+        if(words.includes(marked[i])) {
+            toRemove = words.indexOf(marked[i]);
+            words.splice(toRemove, 1);
+        }
+    }
+
+}
+    
+// Return a list of 2-tuples containing sorted words and their ranks.
+function getRankings(words) {
+
+    // Find the most common letter / position combinations.
+    mapping = [{}, {}, {}, {}, {}];
+    for(i = 0; i < words.length; i++) {
+        for(j = 0; j < 5; j++) {
+            if((Object.keys(mapping[j])).includes(words[i][j]) == false) {
+                mapping[j][words[i][j]] = 0;
+            }
+            mapping[j][words[i][j]] += 1;
+        }
+    }
+
+    words_ranks = [];
+    half = words.length / 2;
+    for(i = 0; i < words.length; i++) {
+        rank = 0;
+        for(j = 0; j < 5; j++) {
+            rank += Math.abs(half - mapping[j][words[i][j]])
+        }
+        words_ranks.push(rank)
+    }
+
+    // Generate a list of the sorted words and their ranks.
+    sorted_ranks = [...words_ranks];
+    sorted_ranks.sort((a, b) => a - b);
+    result = [];
+    for(i = 0; i < words.length; i++) {
+        result.push([words[words_ranks.indexOf(sorted_ranks[i])], sorted_ranks[i]]);
+    }
+    
+    // Return the list of 2-tuples.
+    return result;
+
+}

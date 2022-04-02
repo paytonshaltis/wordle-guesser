@@ -22,6 +22,11 @@ div.board {
 }
 
 div.tile {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select:none; 
+  user-select:none;
+  -o-user-select:none;
   border: 2px solid rgba(169, 169, 169, 0.4);
   display: inline-flex;
   justify-content: center;
