@@ -1,6 +1,3 @@
-from array import array
-
-
 FIRST_GUESS     = 'RATES'
 FIRST_OUTCOME   = '10110'
 
@@ -27,11 +24,18 @@ for i in range(len(FIRST_GUESS)):
 
     # If the letter is gray...
     if int(FIRST_OUTCOME[i]) == 0:
-        incorrect_positions[0].append(FIRST_GUESS[i])
-        incorrect_positions[1].append(FIRST_GUESS[i])
-        incorrect_positions[2].append(FIRST_GUESS[i])
-        incorrect_positions[3].append(FIRST_GUESS[i])
-        incorrect_positions[4].append(FIRST_GUESS[i])
+
+        # Only rule it out of other non-green positions.
+        if correct_positions[0] != FIRST_GUESS[i]:
+            incorrect_positions[0].append(FIRST_GUESS[i])
+        if correct_positions[1] != FIRST_GUESS[i]:
+            incorrect_positions[1].append(FIRST_GUESS[i])
+        if correct_positions[2] != FIRST_GUESS[i]:
+            incorrect_positions[2].append(FIRST_GUESS[i])
+        if correct_positions[3] != FIRST_GUESS[i]:
+            incorrect_positions[3].append(FIRST_GUESS[i])
+        if correct_positions[4] != FIRST_GUESS[i]:
+            incorrect_positions[4].append(FIRST_GUESS[i])
 
     # If the letter is yellow...
     elif int(FIRST_OUTCOME[i]) == 1:
@@ -69,4 +73,18 @@ for word in marked:
     if words.count(word) != 0:
         words.remove(word)
 
+# Find the most common letter / position combinations.
+mapping = [{}, {}, {}, {}, {}]
+for word in words:
+    for i in range(5):
+        if list(mapping[i].keys()).count(word[i]) == 0:
+            mapping[i][word[i]] = 0
+        mapping[i][word[i]] += 1
+
+# Find all letter / position combo that occur about half of the time. This is defined
+# as (number of words / 2) +- (number of words / 10)
+# Find words with the most letter / position combos from above
+print(len(words))
+
+print(mapping)
 print(words)
