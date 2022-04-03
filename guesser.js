@@ -6,6 +6,8 @@ clickingEnabled = true;
 errorCooldown = false;
 showingStats = false;
 statsEnabled = false;
+statsMode = null;
+statsWord = null;
 correct_positions   = ['', '', '', '', ''];
 incorrect_positions = [[], [], [], [], []];
 contains_letters    = [];
@@ -20,6 +22,17 @@ tileStates = [
     [-1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1]
 ];
+messages = {
+    'user_t' : 'user',
+    'hit-bottom_t' : 'hit-bottom',
+    'no-find_t' : 'no-find',
+    'program-found_t' : 'It has to be ',
+    'user' : 'user',
+    'hit-bottom' : 'hit-bottom',
+    'no-find' : 'no-find',
+    'program-found' : 'program-found',
+    'common' : 'common'
+}
 
 // This function is called whenever a tile is clicked. It attempts to toggle
 // the current tile color if the row is currently editable.
@@ -115,12 +128,11 @@ function handleKeydown(e) {
             else if(currRow <= 4) {
                 currCol = 0;
                 currRow += 1;
-                rotateTiles(currRow);
                 processInput(currRow - 1);
+                rotateTiles(currRow);
                 typingEnabled = false;
                 clickingEnabled = false;
             }
-
 
         }
 
@@ -177,16 +189,16 @@ function rotateTiles(currRow) {
     $(`#${currRow - 1}0`).addClass("rotate");
     setTimeout(() => {
         $(`#${currRow - 1}1`).addClass("rotate");
-        setTimeout(() => {
-            $(`#${currRow - 1}2`).addClass("rotate");
-            setTimeout(() => {
-                $(`#${currRow - 1}3`).addClass("rotate");
-                setTimeout(() => {
-                    $(`#${currRow - 1}4`).addClass("rotate");
-                }, 275);
-            }, 275);
-        }, 275);
     }, 275);
+    setTimeout(() => {
+        $(`#${currRow - 1}2`).addClass("rotate");
+    }, 550);
+    setTimeout(() => {
+        $(`#${currRow - 1}3`).addClass("rotate");
+    }, 825);
+    setTimeout(() => {
+        $(`#${currRow - 1}4`).addClass("rotate");
+    }, 1100);
 }
 
 // Uses the input from the submitted row to suggest the next word.
@@ -239,7 +251,6 @@ function processInput(currRow) {
         suggestion = ranks[0][0];
         console.log('solved!');
         completed(suggestion, 'program-found');
-        return true;
     }
     if(ranks.length == 0) {
         completed(null, 'no-find');
@@ -419,7 +430,7 @@ function completed(word, mode) {
                     setTimeout(() => {
                         $(`#${currRow - 1}${4}`).addClass("bounce");
                         setTimeout(() => {
-                            toggleStatsMenu(word);
+                            toggleStatsMenu(word, mode);
                             // alert(`Congrats! Looks like ${word} was the word!`);
                         }, 1000);
                     }, 100);
@@ -430,14 +441,14 @@ function completed(word, mode) {
     if(mode == 'hit-bottom' && !doneRunning) {
         doneRunning = true;
         setTimeout(() => {
-            toggleStatsMenu(word);
+            toggleStatsMenu(word, mode);
             // alert(`Looks like we ran out of guesses.`);
         }, 2000);
     }
     if(mode == 'no-find'  && !doneRunning) {
         doneRunning = true;
         setTimeout(() => {
-            toggleStatsMenu(word);
+            toggleStatsMenu(word, mode);
             // alert(`Looks like no more words are coming up... check your input again.`);
         }, 2000);
     }
@@ -464,7 +475,7 @@ function completed(word, mode) {
                                             setTimeout(() => {
                                                 $(`#${currRow}${4}`).addClass("bounce");
                                                 setTimeout(() => {
-                                                    toggleStatsMenu(word);
+                                                    toggleStatsMenu(word, mode);
                                                     // alert(`Success! The word must be ${word}!`);
                                                 }, 1000);
                                             }, 100);
@@ -480,7 +491,13 @@ function completed(word, mode) {
     }
 }
 
-function toggleStatsMenu(word) {
+function toggleStatsMenu(word, mode) {
+
+    // Set the mode upon first stats display.
+    if(!statsMode) {
+        statsMode = mode;
+        statsWord = word;
+    }
 
     statsEnabled = true;
     if(!showingStats) {
@@ -499,6 +516,17 @@ function showResults(word) {
     $("div.stats-wrapper").removeClass("done-showing").addClass("showing-stats");
     $("div.stats-board").removeClass("done-showing").addClass("showing-stats");
     $("div.filter").removeClass("done-showing").addClass("showing-stats");
+
+    // Add content to the completion menu.
+    if(statsMode == 'program-found' || statsMode == 'user') {
+        $("p.title").text(messages[statsMode + '_t'] + "'" + statsWord + "'!");
+    }
+    else {
+        $("p.title").text(messages[statsMode] + '_t');
+    }
+    $("#i1").text(messages[statsMode]);
+    $("#i2").text(messages['common']);
+
 }
 
 function stopShowingResults() {

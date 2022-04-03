@@ -4,7 +4,7 @@
 }
 
 body {
-  background-color: black;
+  background-color: #121213;
   margin: 0;
   font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
 }
@@ -17,12 +17,12 @@ div.filter {
 }
 
 div.filter.showing-stats {
-  animation: blur 0.3s linear;
+  animation: blur 0.2s linear;
   animation-fill-mode: forwards;
 }
 
 div.filter.done-showing {
-  animation: unblur 0.3s linear;
+  animation: unblur 0.2s linear;
   animation-fill-mode: forwards;
 }
 
@@ -57,22 +57,46 @@ div.stats-board {
   height: 450px;
   width: 85%;
   max-width: 450px;
-  background-color: gray;
+  background-color: 121213;
   visibility: hidden;
   z-index: 305;
+  border: 2px solid gray;
+  color: white;
+  font-size: 28px;
+  font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select:none; 
+  user-select:none;
+  -o-user-select:none;
+}
+
+p.title {
+  font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: bold;
+  margin: 0;
+  font-size: 1.05em;
+}
+
+div.stats-board div.heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 50px;
+  color: white;
 }
 
 div.stats-wrapper.showing-stats,
 div.stats-board.showing-stats {
   visibility: visible;
-  animation: stats-appear 0.3s linear;
+  animation: stats-appear 0.2s linear;
   animation-fill-mode: forwards;
 }
 
 div.stats-wrapper.done-showing,
 div.stats-board.done-showing {
   visibility: visible;
-  animation: stats-disappear 0.3s linear;
+  animation: stats-disappear 0.2s linear;
   animation-fill-mode: forwards;
 }
 
@@ -100,7 +124,7 @@ div.error.show {
 
 div.keyboard {
   height: 200px;
-  background-color: black;
+  background-color: 121213;
 }
 
 div.tile {
@@ -184,6 +208,33 @@ div.title {
   font-size: 2.5em;
   line-height: 100%;
   letter-spacing: 0.01em;
+}
+
+.close {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 32px;
+  height: 32px;
+  opacity: 0.5;
+}
+.close:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+.close:before, .close:after {
+  position: absolute;
+  left: 15px;
+  content: ' ';
+  height: 33px;
+  width: 2px;
+  background-color: white
+}
+.close:before {
+  transform: rotate(45deg);
+}
+.close:after {
+  transform: rotate(-45deg);
 }
 
 @keyframes blur {
