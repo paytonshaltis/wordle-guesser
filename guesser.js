@@ -40,8 +40,7 @@ function tileClick(id) {
 
 }
 
-// Event handler for any user key press.
-document.addEventListener("keydown", function(e) {
+function handleKeydown(e) {
     key = e.key;
 
     // Handles typing of letters.
@@ -91,11 +90,12 @@ document.addEventListener("keydown", function(e) {
     if(key == 'Enter') {
         
         // If the entire word is entered and all tiles are colored.
-        if(currRow <= 4 && currCol == 5 && tileStates[currRow].includes(-1) == false) {
+        if(currRow <= 4 && currCol == 5 && tileStates[currRow].includes(-1) == false && ALL_WORDS.includes(($(`#${currRow}${0}`).text() + $(`#${currRow}${1}`).text() + $(`#${currRow}${2}`).text() + $(`#${currRow}${3}`).text() + $(`#${currRow}${4}`).text()))) {
             currCol = 0;
             currRow += 1;
             rotateTiles();
             processInput(currRow - 1);
+            document.removeEventListener("keydown", handleKeydown);
         }
 
         // Otherwise, shake to show incompletion.
@@ -108,7 +108,10 @@ document.addEventListener("keydown", function(e) {
 
     }
 
-});
+}
+
+// Event handler for any user key press.
+document.addEventListener("keydown", handleKeydown);
 
 // Rotates the tiles in sequence one after the other
 function rotateTiles() {
@@ -180,6 +183,7 @@ function processInput(currRow) {
                     setTimeout(() => {
                         $(`#${currRow + 1}${4}`).text(ranks[0][0][4]);
                         $(`#${currRow + 1}${4}`).addClass("suggestion");
+                        document.addEventListener("keydown", handleKeydown);
                     }, 250);
                 }, 250);
             }, 250);
@@ -219,7 +223,7 @@ function makeGuess(guess, guess_outcome, correct_positions, incorrect_positions,
     for(i = 0; i < grays.length; i++) {
 
         // If a yellow tile of this letter exists, do nothing.
-        if(contains_letters.includes(guess[i]))
+        if(contains_letters.includes(grays[i]))
             continue;
 
         // Only rule it out of other non-green positions.
@@ -234,6 +238,9 @@ function makeGuess(guess, guess_outcome, correct_positions, incorrect_positions,
         if(correct_positions[4] != grays[i])
             incorrect_positions[4].push(grays[i]);
     }
+
+    console.log("correct_positions", correct_positions)
+    console.log("incorrect_positions", incorrect_positions)
  
 }
 
