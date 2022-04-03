@@ -7,14 +7,23 @@ body {
   background-color: black;
   margin: 0;
   font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+}
+
+div.filter {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100vh;
 }
 
-body.blur {
-  filter: brightness(63%);
+div.filter.showing-stats {
+  animation: blur 0.3s linear;
+  animation-fill-mode: forwards;
+}
+
+div.filter.done-showing {
+  animation: unblur 0.3s linear;
+  animation-fill-mode: forwards;
 }
 
 main {
@@ -38,22 +47,33 @@ div.stats-wrapper {
   justify-content: center;
   align-items: center;
   position: fixed;
-  top: 110px;
   width: 100%;
+  height: 100%;
   visibility: hidden;
+  z-index: 300;
 }
 
 div.stats-board {
   height: 450px;
-  margin: 8px 0;
   width: 85%;
   max-width: 450px;
-  background-color: red;
+  background-color: gray;
   visibility: hidden;
+  z-index: 305;
 }
 
-.showing-stats {
+div.stats-wrapper.showing-stats,
+div.stats-board.showing-stats {
+  visibility: visible;
+  animation: stats-appear 0.3s linear;
+  animation-fill-mode: forwards;
+}
 
+div.stats-wrapper.done-showing,
+div.stats-board.done-showing {
+  visibility: visible;
+  animation: stats-disappear 0.3s linear;
+  animation-fill-mode: forwards;
 }
 
 div.error {
@@ -164,6 +184,48 @@ div.title {
   font-size: 2.5em;
   line-height: 100%;
   letter-spacing: 0.01em;
+}
+
+@keyframes blur {
+  0% {
+    filter: brightness(100%);
+  }
+  100% {
+    filter: brightness(63%);
+  }
+}
+
+@keyframes stats-appear {
+  0% {
+    opacity: 0%;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 100%;
+    transform: translateY(0px);
+  }
+}
+
+@keyframes unblur {
+  0% {
+    filter: brightness(63%);
+  }
+  100% {
+    filter: brightness(100%);
+  }
+}
+
+@keyframes stats-disappear {
+  0% {
+    visibility: visivle;
+    opacity: 100%;
+    transform: translateY(0px);
+  }
+  100% {
+    visibility: visible;
+    opacity: 0%;
+    transform: translateY(-20px);
+  }
 }
 
 @keyframes appear {

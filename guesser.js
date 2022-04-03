@@ -4,6 +4,8 @@ doneRunning = false;
 typingEnabled = true;
 clickingEnabled = true;
 errorCooldown = false;
+showingStats = false;
+statsEnabled = false;
 correct_positions   = ['', '', '', '', ''];
 incorrect_positions = [[], [], [], [], []];
 contains_letters    = [];
@@ -158,6 +160,11 @@ function handleKeydown(e) {
             }
         }
 
+    }
+
+    // Handles typing of escape.
+    if(key == 'Escape' && statsEnabled) {
+        toggleStatsMenu();
     }
 
 }
@@ -412,8 +419,8 @@ function completed(word, mode) {
                     setTimeout(() => {
                         $(`#${currRow - 1}${4}`).addClass("bounce");
                         setTimeout(() => {
-                            showResults(word);
-                            alert(`Congrats! Looks like ${word} was the word!`);
+                            toggleStatsMenu(word);
+                            // alert(`Congrats! Looks like ${word} was the word!`);
                         }, 1000);
                     }, 100);
                 }, 100);
@@ -423,15 +430,15 @@ function completed(word, mode) {
     if(mode == 'hit-bottom' && !doneRunning) {
         doneRunning = true;
         setTimeout(() => {
-            showResults(word);
-            alert(`Looks like we ran out of guesses.`);
+            toggleStatsMenu(word);
+            // alert(`Looks like we ran out of guesses.`);
         }, 2000);
     }
     if(mode == 'no-find'  && !doneRunning) {
         doneRunning = true;
         setTimeout(() => {
-            showResults(word);
-            alert(`Looks like no more words are coming up... check your input again.`);
+            toggleStatsMenu(word);
+            // alert(`Looks like no more words are coming up... check your input again.`);
         }, 2000);
     }
     if(mode == 'program-found'  && !doneRunning) {
@@ -457,8 +464,8 @@ function completed(word, mode) {
                                             setTimeout(() => {
                                                 $(`#${currRow}${4}`).addClass("bounce");
                                                 setTimeout(() => {
-                                                    showResults(word);
-                                                    alert(`Success! The word must be ${word}!`);
+                                                    toggleStatsMenu(word);
+                                                    // alert(`Success! The word must be ${word}!`);
                                                 }, 1000);
                                             }, 100);
                                         }, 100);
@@ -473,9 +480,34 @@ function completed(word, mode) {
     }
 }
 
+function toggleStatsMenu(word) {
+
+    statsEnabled = true;
+    if(!showingStats) {
+        showResults(word);
+    }
+    else {
+        stopShowingResults();
+    }
+}
+
 function showResults(word) {
 
+    showingStats = true;
+
     // Make the completion menu visible.
-    $("div.stats-wrapper").addClass("showing-stats");
-    $("div.stats-board").addClass("showing-stats");
+    $("div.stats-wrapper").removeClass("done-showing").addClass("showing-stats");
+    $("div.stats-board").removeClass("done-showing").addClass("showing-stats");
+    $("div.filter").removeClass("done-showing").addClass("showing-stats");
+}
+
+function stopShowingResults() {
+
+    showingStats = false;
+
+    // Make the completion menu hidden.
+    $("div.stats-wrapper").removeClass("showing-stats").addClass("done-showing");
+    $("div.stats-board").removeClass("showing-stats").addClass("done-showing");
+    $("div.filter").removeClass("showing-stats").addClass("done-showing");
+
 }
