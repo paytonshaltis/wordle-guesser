@@ -1,5 +1,8 @@
 
 // Global variables.
+doneRunning = false;
+typingEnabled = true;
+clickingEnabled = true;
 correct_positions   = ['', '', '', '', ''];
 incorrect_positions = [[], [], [], [], []];
 contains_letters    = [];
@@ -19,8 +22,8 @@ tileStates = [
 // the current tile color if the row is currently editable.
 function tileClick(id) {
 
-    // Only allow if we are on the current row
-    if(currRow == id.substring(0,1)) {
+    // Only allow if we are on the current row and clicking is enabled.
+    if(currRow == id.substring(0,1) && clickingEnabled) {
 
         tileStates[id.substring(0,1)][id.substring(1)] = (1 + tileStates[id.substring(0,1)][id.substring(1)]) % 3
         var newColor = tileStates[id.substring(0,1)][id.substring(1)];
@@ -44,7 +47,7 @@ function handleKeydown(e) {
     key = e.key;
 
     // Handles typing of letters.
-    if(key.charCodeAt(0) >= 97 && key.charCodeAt(0) <= 122) {
+    if(key.charCodeAt(0) >= 97 && key.charCodeAt(0) <= 122 && typingEnabled) {
 
         if(currCol <= 4) {
 
@@ -70,7 +73,7 @@ function handleKeydown(e) {
     }
 
     // Handles typing of backspace.
-    if(key == 'Backspace') {
+    if(key == 'Backspace' && typingEnabled) {
 
         if(currCol >= 1) {
 
@@ -87,15 +90,28 @@ function handleKeydown(e) {
     }
 
     // Handles typing of enter.
-    if(key == 'Enter') {
+    if(key == 'Enter' && typingEnabled) {
         
-        // If the entire word is entered and all tiles are colored.
-        if(currRow <= 4 && currCol == 5 && tileStates[currRow].includes(-1) == false && ALL_WORDS.includes(($(`#${currRow}${0}`).text() + $(`#${currRow}${1}`).text() + $(`#${currRow}${2}`).text() + $(`#${currRow}${3}`).text() + $(`#${currRow}${4}`).text()))) {
-            currCol = 0;
-            currRow += 1;
-            rotateTiles();
-            processInput(currRow - 1);
-            document.removeEventListener("keydown", handleKeydown);
+        // If the entire word is entered and all tiles are colored and the word exists...
+        if(currCol == 5 && tileStates[currRow].includes(-1) == false && ALL_WORDS.includes(($(`#${currRow}${0}`).text() + $(`#${currRow}${1}`).text() + $(`#${currRow}${2}`).text() + $(`#${currRow}${3}`).text() + $(`#${currRow}${4}`).text()))) {
+
+            // Once we hit the bottom.
+            if(currRow == 5) {
+                rotateTiles(currRow + 1);
+                completed($(`#${currRow - 1}${0}`).text() + $(`#${currRow - 1}${1}`).text() + $(`#${currRow - 1}${2}`).text() + $(`#${currRow - 1}${3}`).text() + $(`#${currRow - 1}${4}`).text(), 'hit-bottom');
+            }
+
+            // So long as we are still on a valid row.
+            if(currRow <= 4) {
+                currCol = 0;
+                currRow += 1;
+                rotateTiles(currRow);
+                processInput(currRow - 1);
+                typingEnabled = false;
+                clickingEnabled = false;
+            }
+
+
         }
 
         // Otherwise, shake to show incompletion.
@@ -114,7 +130,7 @@ function handleKeydown(e) {
 document.addEventListener("keydown", handleKeydown);
 
 // Rotates the tiles in sequence one after the other
-function rotateTiles() {
+function rotateTiles(currRow) {
     $(`#${currRow - 1}0`).addClass("rotate");
     setTimeout(() => {
         $(`#${currRow - 1}1`).addClass("rotate");
@@ -154,6 +170,14 @@ function processInput(currRow) {
         }
     }
 
+    // Stop if the word is marked by the user as complete.
+    if(tiles == '22222') {
+        setTimeout(() => {
+            completed(word, 'user');
+        }, 1750);
+        return;
+    }
+
     console.log(word, tiles);
 
     // Determine the best next word using this information.
@@ -165,7 +189,18 @@ function processInput(currRow) {
     console.log(ranks);
 
     // Store the suggestion for viewing in the next row.
-    suggestion = ranks[0][0];
+    if(ranks.length > 0) {
+        suggestion = ranks[0][0];
+    }
+    if(ranks.length == 1) {
+        suggestion = ranks[0][0];
+        console.log('solved!');
+        completed(suggestion, 'program-found');
+    }
+    if(ranks.length == 0) {
+        completed(null, 'no-find');
+        return;
+    }
 
     // Display the next best word on the board.
     setTimeout(() => {
@@ -183,7 +218,8 @@ function processInput(currRow) {
                     setTimeout(() => {
                         $(`#${currRow + 1}${4}`).text(ranks[0][0][4]);
                         $(`#${currRow + 1}${4}`).addClass("suggestion");
-                        document.addEventListener("keydown", handleKeydown);
+                        typingEnabled = true;
+                        clickingEnabled = true;
                     }, 250);
                 }, 250);
             }, 250);
@@ -315,4 +351,81 @@ function getRankings(words) {
     // Return the list of 2-tuples.
     return result;
 
+}
+
+// Displays the victory screen for a solved word.
+function completed(word, mode) {
+
+    // Start by disabling clicking and typing.
+    clickingEnabled = false;
+    typingEnabled = false;
+
+    // Make the final letters perform a dance.
+    if(mode == 'user' && !doneRunning) {
+        doneRunning = true;
+        $(`#${currRow - 1}${0}`).addClass("bounce");
+        setTimeout(() => {
+            $(`#${currRow - 1}${1}`).addClass("bounce");
+            setTimeout(() => {
+                $(`#${currRow - 1}${2}`).addClass("bounce");
+                setTimeout(() => {
+                    $(`#${currRow - 1}${3}`).addClass("bounce");
+                    setTimeout(() => {
+                        $(`#${currRow - 1}${4}`).addClass("bounce");
+                        setTimeout(() => {
+                            alert(`Congrats! Looks like ${word} was the word!`);
+                        }, 1000);
+                    }, 100);
+                }, 100);
+            }, 100);
+        }, 100);
+    }
+    if(mode == 'hit-bottom' && !doneRunning) {
+        doneRunning = true;
+        setTimeout(() => {
+            alert(`Looks like we ran out of guesses.`);
+        }, 2000);
+    }
+    if(mode == 'no-find'  && !doneRunning) {
+        doneRunning = true;
+        setTimeout(() => {
+            alert(`Looks like no more words are coming up... check your input again.`);
+        }, 2000);
+    }
+    if(mode == 'program-found'  && !doneRunning) {
+        doneRunning = true;
+        setTimeout(() => {
+            $(`#${currRow}${0}`).addClass("green").removeClass("suggestion");
+            setTimeout(() => {
+                $(`#${currRow}${1}`).addClass("green").removeClass("suggestion");
+                setTimeout(() => {
+                    $(`#${currRow}${2}`).addClass("green").removeClass("suggestion");
+                    setTimeout(() => {
+                        $(`#${currRow}${3}`).addClass("green").removeClass("suggestion");
+                        setTimeout(() => {
+                            $(`#${currRow}${4}`).addClass("green").removeClass("suggestion");
+                            setTimeout(() => {
+                                $(`#${currRow}${0}`).addClass("bounce");
+                                setTimeout(() => {
+                                    $(`#${currRow}${1}`).addClass("bounce");
+                                    setTimeout(() => {
+                                        $(`#${currRow}${2}`).addClass("bounce");
+                                        setTimeout(() => {
+                                            $(`#${currRow}${3}`).addClass("bounce");
+                                            setTimeout(() => {
+                                                $(`#${currRow}${4}`).addClass("bounce");
+                                                setTimeout(() => {
+                                                    alert(`Success! The word must be ${word}!`);
+                                                }, 1000);
+                                            }, 100);
+                                        }, 100);
+                                    }, 100);
+                                }, 100);
+                            })
+                        }, 250);
+                    }, 250);
+                }, 250);
+            }, 250);
+        }, 3000);
+    }
 }
