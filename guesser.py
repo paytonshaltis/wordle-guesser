@@ -25,22 +25,14 @@ def getWords(words) -> list:
 def makeGuess(guess, guess_outcome, correct_positions, incorrect_positions, contains_letters):
     
     # Loop through each letter of the guess.
+    grays = []
     for i in range(len(guess)):
 
         # If the letter is gray...
         if int(guess_outcome[i]) == 0:
 
-            # Only rule it out of other non-green positions.
-            if correct_positions[0] != guess[i]:
-                incorrect_positions[0].append(guess[i])
-            if correct_positions[1] != guess[i]:
-                incorrect_positions[1].append(guess[i])
-            if correct_positions[2] != guess[i]:
-                incorrect_positions[2].append(guess[i])
-            if correct_positions[3] != guess[i]:
-                incorrect_positions[3].append(guess[i])
-            if correct_positions[4] != guess[i]:
-                incorrect_positions[4].append(guess[i])
+            # Mark it and check all positions after they have been revealed.
+            grays.append(guess[i])
 
         # If the letter is yellow...
         elif int(guess_outcome[i]) == 1:
@@ -50,6 +42,22 @@ def makeGuess(guess, guess_outcome, correct_positions, incorrect_positions, cont
         # If the letter is green...
         else:
             correct_positions[i] = guess[i]
+
+    # Need to consider the marked grays.
+    print(grays)
+    for letter in grays:
+        
+        # Only rule it out of other non-green positions before this tile.
+        if correct_positions[0] != letter:
+            incorrect_positions[0].append(letter)
+        if correct_positions[1] != letter:
+            incorrect_positions[1].append(letter)
+        if correct_positions[2] != letter:
+            incorrect_positions[2].append(letter)
+        if correct_positions[3] != letter:
+            incorrect_positions[3].append(letter)
+        if correct_positions[4] != letter:
+            incorrect_positions[4].append(letter)
 
 
 
@@ -104,7 +112,7 @@ def getRankings(words) -> list:
     sorted_ranks = words_ranks[:]
     result = []
     for i in range(len(words)):
-        result.append((words[words_ranks.index(sorted_ranks[i])], sorted_ranks[i]))
+        result.append((words[i], sorted_ranks[i]))
     
     # Sort the list of 2-tuples
     result.sort(key=lambda x: x[1], reverse=False)

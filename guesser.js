@@ -5,6 +5,7 @@ incorrect_positions = [[], [], [], [], []];
 contains_letters    = [];
 currRow = 0
 currCol = 0
+suggestion = '';
 tileStates = [
     [-1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1],
@@ -45,8 +46,9 @@ document.addEventListener("keydown", function(e) {
 
     // Handles typing of letters.
     if(key.charCodeAt(0) >= 97 && key.charCodeAt(0) <= 122) {
-        
+
         if(currCol <= 4) {
+
             $(`#${currRow}${currCol}`).text(key.toUpperCase());
             $(`#${currRow}${currCol}`).addClass("type");
             $(`#${currRow}${currCol}`).addClass("hasLetter");
@@ -58,17 +60,30 @@ document.addEventListener("keydown", function(e) {
                 $(`#${currRow}3`).removeClass("type");
                 $(`#${currRow}4`).removeClass("type");
             }, 50);
+
+            // Need to remove suggestion when typing.
+            if(currRow >= 1) {
+                console.log('remove suggestion...');
+                $(`#${currRow}${currCol - 1}`).removeClass("suggestion");
+            }
         }
 
     }
 
     // Handles typing of backspace.
     if(key == 'Backspace') {
-        
+
         if(currCol >= 1) {
+
             $(`#${currRow}${currCol - 1}`).removeClass("hasLetter");
             currCol -=1;
             $(`#${currRow}${currCol}`).text('');
+
+            // Need to readd suggestion if backspacing.
+            if(currRow >= 1) {
+                $(`#${currRow}${currCol}`).addClass("suggestion");
+                $(`#${currRow}${currCol}`).text(suggestion[currCol]);
+            }
         }
     }
 
@@ -141,29 +156,50 @@ function processInput(currRow) {
     // Determine the best next word using this information.
     makeGuess(word, tiles, correct_positions, incorrect_positions, contains_letters);
     filterWords(words, correct_positions, incorrect_positions, contains_letters);
-    console.log(getRankings(words));
+    
+    // Print the entire list to the console.
+    ranks = getRankings(words);
+    console.log(ranks);
+
+    // Store the suggestion for viewing in the next row.
+    suggestion = ranks[0][0];
+
+    // Display the next best word on the board.
+    setTimeout(() => {
+        $(`#${currRow + 1}${0}`).text(ranks[0][0][0]);
+        $(`#${currRow + 1}${0}`).addClass("suggestion");
+        setTimeout(() => {
+            $(`#${currRow + 1}${1}`).text(ranks[0][0][1]);
+            $(`#${currRow + 1}${1}`).addClass("suggestion");
+            setTimeout(() => {
+                $(`#${currRow + 1}${2}`).text(ranks[0][0][2]);
+                $(`#${currRow + 1}${2}`).addClass("suggestion");
+                setTimeout(() => {
+                    $(`#${currRow + 1}${3}`).text(ranks[0][0][3]);
+                    $(`#${currRow + 1}${3}`).addClass("suggestion");
+                    setTimeout(() => {
+                        $(`#${currRow + 1}${4}`).text(ranks[0][0][4]);
+                        $(`#${currRow + 1}${4}`).addClass("suggestion");
+                    }, 250);
+                }, 250);
+            }, 250);
+        }, 250);
+    }, 1750);
 }
 
 // Updates arrays based on the guess provided.
 function makeGuess(guess, guess_outcome, correct_positions, incorrect_positions, contains_letters) {
     
     // Loop through each letter of the guess.
+    grays = [];
     for(i = 0; i < guess.length; i++) {
 
         // If the letter is gray...
         if(guess_outcome[i] == 0) {
-            
-            // Only rule it out of other non-green positions.
-            if(correct_positions[0] != guess[i])
-                incorrect_positions[0].push(guess[i]);
-            if(correct_positions[1] != guess[i])
-                incorrect_positions[1].push(guess[i]);
-            if(correct_positions[2] != guess[i])
-                incorrect_positions[2].push(guess[i]);
-            if(correct_positions[3] != guess[i])
-                incorrect_positions[3].push(guess[i]);
-            if(correct_positions[4] != guess[i])
-                incorrect_positions[4].push(guess[i]);
+
+            // Mark it and check it after possible greens arise.
+            grays.push(guess[i]);
+    
         }
 
         // If the letter is yellow...
@@ -177,6 +213,22 @@ function makeGuess(guess, guess_outcome, correct_positions, incorrect_positions,
             correct_positions[i] = guess[i];
         }
             
+    }
+
+    // Need to consider the grays.
+    for(i = 0; i < grays.length; i++) {
+
+        // Only rule it out of other non-green positions.
+        if(correct_positions[0] != grays[i])
+            incorrect_positions[0].push(grays[i]);
+        if(correct_positions[1] != grays[i])
+            incorrect_positions[1].push(grays[i]);
+        if(correct_positions[2] != grays[i])
+            incorrect_positions[2].push(grays[i]);
+        if(correct_positions[3] != grays[i])
+            incorrect_positions[3].push(grays[i]);
+        if(correct_positions[4] != grays[i])
+            incorrect_positions[4].push(grays[i]);
     }
  
 }

@@ -78,6 +78,10 @@ div.tile.hasLetter {
   border-color: gray;
 }
 
+div.tile.suggestion {
+  color: rgba(169, 169, 169, 0.4);
+}
+
 @keyframes type {
   0% {
     transform: scale(1);
