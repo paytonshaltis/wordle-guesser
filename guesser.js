@@ -80,6 +80,7 @@ document.addEventListener("keydown", function(e) {
             currCol = 0;
             currRow += 1;
             rotateTiles();
+            processInput(currRow - 1);
         }
 
         // Otherwise, shake to show incompletion.
@@ -111,11 +112,37 @@ function rotateTiles() {
     }, 275);
 }
 
-window.onload = function() {
-    makeGuess('RATES', '10110', correct_positions, incorrect_positions, contains_letters);
+// Uses the input from the submitted row to suggest the next word.
+function processInput(currRow) {
+
+    // Need to get the word and the color of the tiles.
+    word = '';
+    tiles = '';
+
+    for(i = 0; i < 5; i++) {
+        
+        // Retrieve all letters of the guessed word.
+        word += $(`#${currRow}${i}`).text();
+
+        // Retrieve all colors of the tiles.
+        if($(`#${currRow}${i}`).attr('class').split(/\s+/).includes("green")) {
+            tiles += "2";
+        }
+        else if($(`#${currRow}${i}`).attr('class').split(/\s+/).includes("yellow")) {
+            tiles += "1";
+        }
+        else if($(`#${currRow}${i}`).attr('class').split(/\s+/).includes("grey")) {
+            tiles += "0";
+        }
+    }
+
+    console.log(word, tiles);
+
+    // Determine the best next word using this information.
+    makeGuess(word, tiles, correct_positions, incorrect_positions, contains_letters);
     filterWords(words, correct_positions, incorrect_positions, contains_letters);
     console.log(getRankings(words));
-};
+}
 
 // Updates arrays based on the guess provided.
 function makeGuess(guess, guess_outcome, correct_positions, incorrect_positions, contains_letters) {
@@ -163,20 +190,17 @@ function filterWords(words, correct_positions, incorrect_positions, contains_let
         // If they are missing a required letter...
         if((correct_positions[0] != '' && words[i][0] != correct_positions[0]) || (correct_positions[1] != '' && words[i][1] != correct_positions[1]) || (correct_positions[2] != '' && words[i][2] != correct_positions[2]) || (correct_positions[3] != '' && words[i][3] != correct_positions[3]) || (correct_positions[4] != '' && words[i][4] != correct_positions[4])) {
             marked.push(words[i]);
-            console.log("1", words[i]);
         }
 
         // If they contain a letter in an incorrect position...
         if((incorrect_positions[0].includes(words[i][0])) || (incorrect_positions[1].includes(words[i][1])) || (incorrect_positions[2].includes(words[i][2])) || (incorrect_positions[3].includes(words[i][3])) || (incorrect_positions[4].includes(words[i][4]))) {
             marked.push(words[i]);
-            console.log("2", words[i]);
         }
 
         // If the word does not contain all of the correct letters...
         for(j = 0; j < contains_letters.length; j++) {
             if(words[i].includes(contains_letters[j]) == false) {
                 marked.push(words[i]);
-                console.log("3", words[i]);
             }
         }
     }
@@ -215,13 +239,15 @@ function getRankings(words) {
         words_ranks.push(rank)
     }
 
-    // Generate a list of the sorted words and their ranks.
+    // Generate a list of words and their ranks.
     sorted_ranks = [...words_ranks];
-    sorted_ranks.sort((a, b) => a - b);
     result = [];
     for(i = 0; i < words.length; i++) {
-        result.push([words[words_ranks.indexOf(sorted_ranks[i])], sorted_ranks[i]]);
+        result.push([words[i], sorted_ranks[i]]);
     }
+
+    // Sort the list of 2-tuples.
+    result.sort((a,b) => a[1] -b[1]);
     
     // Return the list of 2-tuples.
     return result;

@@ -100,13 +100,15 @@ def getRankings(words) -> list:
 
     print(mapping)
 
-    # Print all words in order of rank.
+    # Match each word with its ranking.
     sorted_ranks = words_ranks[:]
-    sorted_ranks.sort()
     result = []
     for i in range(len(words)):
         result.append((words[words_ranks.index(sorted_ranks[i])], sorted_ranks[i]))
     
+    # Sort the list of 2-tuples
+    result.sort(key=lambda x: x[1], reverse=False)
+
     # Return the list of 2-tuples.
     return result
 
@@ -128,5 +130,8 @@ while len(words) > 1 or start:
     makeGuess(guess, outcome, correct_positions, incorrect_positions, contains_letters)
     filterWords(words, correct_positions, incorrect_positions, contains_letters)
     ranks = getRankings(words)
+
+    for word, rank in ranks:
+        print(word, rank)
 
     print(ranks[0][0])
