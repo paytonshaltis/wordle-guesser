@@ -3,6 +3,7 @@
 doneRunning = false;
 typingEnabled = true;
 clickingEnabled = true;
+errorCooldown = false;
 correct_positions   = ['', '', '', '', ''];
 incorrect_positions = [[], [], [], [], []];
 contains_letters    = [];
@@ -116,10 +117,38 @@ function handleKeydown(e) {
 
         // Otherwise, shake to show incompletion.
         else {
+            
+            // Shake the tiles in the current row.
             $(`#${currRow}`).addClass("shake");
             setTimeout(function() {
                 $(`#${currRow}`).removeClass("shake");
             }, 250);
+
+            // Display the error message on the screen.
+            $(`div.error`).addClass("show");
+
+            if(!errorCooldown) {
+                errorCooldown = true;
+                setTimeout(() => {
+                    $(`div.error`).removeClass("show");
+                    errorCooldown = false;
+                }, 1500);
+            }
+
+            // If the user is missing letters...
+            if(currCol != 5) {
+                $(`div.error`).text("Missing Letters");
+            }
+
+            // If the word is invalid...
+            else if(!ALL_WORDS.includes(($(`#${currRow}${0}`).text() + $(`#${currRow}${1}`).text() + $(`#${currRow}${2}`).text() + $(`#${currRow}${3}`).text() + $(`#${currRow}${4}`).text()))) {
+                $(`div.error`).text("Invalid Word");
+            }
+
+            // If the user is missing colors...
+            else {
+                $(`div.error`).text("Missing Colors");
+            }
         }
 
     }
@@ -232,6 +261,7 @@ function makeGuess(guess, guess_outcome, correct_positions, incorrect_positions,
     
     // Loop through each letter of the guess.
     grays = [];
+    curr_yellow = [];
     for(i = 0; i < guess.length; i++) {
 
         // If the letter is gray...
@@ -246,6 +276,7 @@ function makeGuess(guess, guess_outcome, correct_positions, incorrect_positions,
         else if(guess_outcome[i] == 1) {
             incorrect_positions[i].push(guess[i]);
             contains_letters.push(guess[i]);
+            curr_yellow.push(guess[i]);
         }
 
         // If the letter is green...
@@ -259,7 +290,7 @@ function makeGuess(guess, guess_outcome, correct_positions, incorrect_positions,
     for(i = 0; i < grays.length; i++) {
 
         // If a yellow tile of this letter exists, do nothing.
-        if(contains_letters.includes(grays[i]))
+        if(curr_yellow.includes(grays[i]))
             continue;
 
         // Only rule it out of other non-green positions.
