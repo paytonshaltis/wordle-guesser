@@ -47,6 +47,10 @@ def makeGuess(guess, guess_outcome, correct_positions, incorrect_positions, cont
     print(grays)
     for letter in grays:
         
+        # If the letter is on the board as a yellow, do nothing.
+        if(contains_letters.count(letter) != 0):
+            continue
+
         # Only rule it out of other non-green positions before this tile.
         if correct_positions[0] != letter:
             incorrect_positions[0].append(letter)

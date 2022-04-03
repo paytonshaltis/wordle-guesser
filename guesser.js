@@ -218,6 +218,10 @@ function makeGuess(guess, guess_outcome, correct_positions, incorrect_positions,
     // Need to consider the grays.
     for(i = 0; i < grays.length; i++) {
 
+        // If a yellow tile of this letter exists, do nothing.
+        if(contains_letters.includes(guess[i]))
+            continue;
+
         // Only rule it out of other non-green positions.
         if(correct_positions[0] != grays[i])
             incorrect_positions[0].push(grays[i]);
