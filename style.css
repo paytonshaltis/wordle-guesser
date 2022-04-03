@@ -52,6 +52,10 @@ div.stats-board {
   visibility: hidden;
 }
 
+.showing-stats {
+
+}
+
 div.error {
   height: 50px;
   width: 175px;
@@ -157,7 +161,6 @@ header {
 div.title {
   font-family: 'Karnak', sans-serif;
   color: white;
-  /* font-weight: 700; */
   font-size: 2.5em;
   line-height: 100%;
   letter-spacing: 0.01em;

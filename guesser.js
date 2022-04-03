@@ -98,12 +98,19 @@ function handleKeydown(e) {
 
             // Once we hit the bottom.
             if(currRow == 5) {
-                rotateTiles(currRow + 1);
-                completed($(`#${currRow - 1}${0}`).text() + $(`#${currRow - 1}${1}`).text() + $(`#${currRow - 1}${2}`).text() + $(`#${currRow - 1}${3}`).text() + $(`#${currRow - 1}${4}`).text(), 'hit-bottom');
+                typingEnabled = false;
+                clickingEnabled = false;
+                currRow += 1;
+                if(processInput(currRow - 1)) {
+                    rotateTiles(currRow);
+                }
+                else {
+                    completed($(`#${currRow - 1}${0}`).text() + $(`#${currRow - 1}${1}`).text() + $(`#${currRow - 1}${2}`).text() + $(`#${currRow - 1}${3}`).text() + $(`#${currRow - 1}${4}`).text(), 'hit-bottom');
+                }
             }
 
             // So long as we are still on a valid row.
-            if(currRow <= 4) {
+            else if(currRow <= 4) {
                 currCol = 0;
                 currRow += 1;
                 rotateTiles(currRow);
@@ -204,7 +211,7 @@ function processInput(currRow) {
         setTimeout(() => {
             completed(word, 'user');
         }, 1750);
-        return;
+        return true;
     }
 
     console.log(word, tiles);
@@ -225,10 +232,11 @@ function processInput(currRow) {
         suggestion = ranks[0][0];
         console.log('solved!');
         completed(suggestion, 'program-found');
+        return true;
     }
     if(ranks.length == 0) {
         completed(null, 'no-find');
-        return;
+        return false;
     }
 
     // Display the next best word on the board.
@@ -404,6 +412,7 @@ function completed(word, mode) {
                     setTimeout(() => {
                         $(`#${currRow - 1}${4}`).addClass("bounce");
                         setTimeout(() => {
+                            showResults(word);
                             alert(`Congrats! Looks like ${word} was the word!`);
                         }, 1000);
                     }, 100);
@@ -414,12 +423,14 @@ function completed(word, mode) {
     if(mode == 'hit-bottom' && !doneRunning) {
         doneRunning = true;
         setTimeout(() => {
+            showResults(word);
             alert(`Looks like we ran out of guesses.`);
         }, 2000);
     }
     if(mode == 'no-find'  && !doneRunning) {
         doneRunning = true;
         setTimeout(() => {
+            showResults(word);
             alert(`Looks like no more words are coming up... check your input again.`);
         }, 2000);
     }
@@ -446,6 +457,7 @@ function completed(word, mode) {
                                             setTimeout(() => {
                                                 $(`#${currRow}${4}`).addClass("bounce");
                                                 setTimeout(() => {
+                                                    showResults(word);
                                                     alert(`Success! The word must be ${word}!`);
                                                 }, 1000);
                                             }, 100);
@@ -459,4 +471,11 @@ function completed(word, mode) {
             }, 250);
         }, 3000);
     }
+}
+
+function showResults(word) {
+
+    // Make the completion menu visible.
+    $("div.stats-wrapper").addClass("showing-stats");
+    $("div.stats-board").addClass("showing-stats");
 }
