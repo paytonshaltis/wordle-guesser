@@ -48,7 +48,16 @@ document.addEventListener("keydown", function(e) {
         
         if(currCol <= 4) {
             $(`#${currRow}${currCol}`).text(key.toUpperCase());
+            $(`#${currRow}${currCol}`).addClass("type");
+            $(`#${currRow}${currCol}`).addClass("hasLetter");
             currCol += 1;
+            setTimeout(function() {
+                $(`#${currRow}0`).removeClass("type");
+                $(`#${currRow}1`).removeClass("type");
+                $(`#${currRow}2`).removeClass("type");
+                $(`#${currRow}3`).removeClass("type");
+                $(`#${currRow}4`).removeClass("type");
+            }, 50);
         }
 
     }
@@ -57,6 +66,7 @@ document.addEventListener("keydown", function(e) {
     if(key == 'Backspace') {
         
         if(currCol >= 1) {
+            $(`#${currRow}${currCol - 1}`).removeClass("hasLetter");
             currCol -=1;
             $(`#${currRow}${currCol}`).text('');
         }
@@ -65,19 +75,45 @@ document.addEventListener("keydown", function(e) {
     // Handles typing of enter.
     if(key == 'Enter') {
         
-        if(currRow <= 4 && currCol == 5) {
+        // If the entire word is entered and all tiles are colored.
+        if(currRow <= 4 && currCol == 5 && tileStates[currRow].includes(-1) == false) {
             currCol = 0;
             currRow += 1;
+            rotateTiles();
+        }
+
+        // Otherwise, shake to show incompletion.
+        else {
+            $(`#${currRow}`).addClass("shake");
+            setTimeout(function() {
+                $(`#${currRow}`).removeClass("shake");
+            }, 250);
         }
 
     }
 
 });
 
+// Rotates the tiles in sequence one after the other
+function rotateTiles() {
+    $(`#${currRow - 1}0`).addClass("rotate");
+    setTimeout(() => {
+        $(`#${currRow - 1}1`).addClass("rotate");
+        setTimeout(() => {
+            $(`#${currRow - 1}2`).addClass("rotate");
+            setTimeout(() => {
+                $(`#${currRow - 1}3`).addClass("rotate");
+                setTimeout(() => {
+                    $(`#${currRow - 1}4`).addClass("rotate");
+                }, 275);
+            }, 275);
+        }, 275);
+    }, 275);
+}
+
 window.onload = function() {
     makeGuess('RATES', '10110', correct_positions, incorrect_positions, contains_letters);
     filterWords(words, correct_positions, incorrect_positions, contains_letters);
-    console.log(words);
     console.log(getRankings(words));
 };
 
