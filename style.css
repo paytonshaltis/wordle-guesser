@@ -13,6 +13,10 @@ body {
   height: 100vh;
 }
 
+body.blur {
+  filter: brightness(63%);
+}
+
 main {
   display: flex;
   justify-content: center;
@@ -27,6 +31,25 @@ div.board {
   padding: 10px;
   height: 400px;
   width: 330px;
+}
+
+div.stats-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 110px;
+  width: 100%;
+  visibility: hidden;
+}
+
+div.stats-board {
+  height: 450px;
+  margin: 8px 0;
+  width: 85%;
+  max-width: 450px;
+  background-color: red;
+  visibility: hidden;
 }
 
 div.error {
@@ -52,7 +75,7 @@ div.error.show {
 }
 
 div.keyboard {
-  height: 225px;
+  height: 200px;
   background-color: black;
 }
 
@@ -126,8 +149,9 @@ header {
   align-items: center;
   justify-content: space-between;
   height: 50px;
-  padding: 8px 16px;
+  padding: 0 16px;
   color: white;
+  border-bottom: solid 1px rgb(58, 58, 68);
 }
 
 div.title {
