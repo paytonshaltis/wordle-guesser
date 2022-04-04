@@ -120,6 +120,7 @@ function handleKeydown(e) {
                     rotateTiles(currRow);
                 }
                 else {
+                    rotateTiles(currRow);
                     completed($(`#${currRow - 1}${0}`).text() + $(`#${currRow - 1}${1}`).text() + $(`#${currRow - 1}${2}`).text() + $(`#${currRow - 1}${3}`).text() + $(`#${currRow - 1}${4}`).text(), 'hit-bottom');
                 }
             }
