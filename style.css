@@ -1,3 +1,11 @@
+/* All CSS variables for the entire page. */
+:root {
+  --rotation-length: 0.5s;
+  --pulse-length: 0.05s;
+  --shake-length: 0.25s;
+  --error-length: 1.5s;
+}
+
 @font-face {
   font-family: Karnak;
   src: url(./KarnakPro-CondensedBlack.otf) format("opentype");
@@ -57,12 +65,13 @@ div.stats-board {
   height: 450px;
   width: 85%;
   max-width: 450px;
-  background-color: 121213;
+  background-color: #121213;
   visibility: hidden;
   z-index: 305;
   border: 2px solid gray;
   color: white;
-  font-size: 28px;
+  font-size: 20px;
+  padding: 8px;
   font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -79,8 +88,9 @@ p.title {
 }
 
 div.stats-board div.heading {
+  font-size: 28px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   height: 50px;
   color: white;
@@ -119,12 +129,11 @@ div.error {
 }
 
 div.error.show {
-  animation: appear 1.5s linear;
+  animation: appear var(--error-length) linear;
 }
 
 div.keyboard {
   height: 200px;
-  background-color: 121213;
 }
 
 div.tile {
@@ -154,7 +163,7 @@ div.row {
 }
 
 div.row.shake {
-  animation: shake 0.25s ease-in-out;
+  animation: shake var(--shake-length) ease-in-out;
 }
 
 div.grey {
@@ -173,14 +182,14 @@ div.green {
 }
 
 div.tile.rotate {
-  animation: rotate 0.5s linear;
+  animation: rotate var(--rotation-length) linear;
 }
 
 div.tile.type {
-  animation: type 0.05s linear;
+  animation: type var(--pulse-length) linear;
 }
 
-div.tile.hasLetter {
+div.tile.has-letter {
   border-color: gray;
 }
 
@@ -310,6 +319,7 @@ div.title {
   }
 }
 
+/* Animation keyframes for pulsing a single tile. */
 @keyframes type {
   0% {
     transform: scale(1);
@@ -322,6 +332,7 @@ div.title {
   }
 }
 
+/* Animation keyframes for rotating a single tile. */
 @keyframes rotate {
   0% {
     transform: rotateX(0deg);
