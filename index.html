@@ -9,6 +9,7 @@
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <link rel="stylesheet" href="style.css">
   <script src="guesser.js"></script>
+  <script src="word-menu.js" defer></script>
   <script src="words.js"></script>
 
 </head>
@@ -25,12 +26,133 @@
   </div>
   <div class="filter">
     <header>
-      <div>left</div>
+      <div class="blocks">
+        <div class="block five">S</div>
+        <div class="block four">D</div>
+        <div class="block three">R</div>
+        <div class="block two">O</div>
+        <div class="block one">W</div>
+      </div>
       <div class="title">Wordle</div>
-      <div>right</div>
+      <div style="width: calc(5 * var(--block-size) + 4 * var(--block-space));">right</div>
     </header>
     <main>
       <div class="error"></div>
+      <div class="menu-left">
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+        <div class="block-text-container">
+          <div class="block-text five">S</div>
+          <div class="block-text four">E</div>
+          <div class="block-text three">T</div>
+          <div class="block-text two">A</div>
+          <div class="block-text one">R</div>
+        </div>
+      
+      </div>
       <div class="board">
         <div class="row" id="0">
           <div class="tile" id="00" onclick="toggleTile('00')"></div>

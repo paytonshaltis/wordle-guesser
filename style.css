@@ -4,6 +4,13 @@
   --pulse-length: 0.05s;
   --shake-length: 0.25s;
   --error-length: 1.5s;
+  --block-size: 50px;
+  --block-space: 3px;
+  --block-text-size: 45px;
+  --block-text-space: 3.5px;
+  --slide-time: 600ms;
+  --trans-type: ease;
+  --header-padding: 8px;
 }
 
 @font-face {
@@ -71,7 +78,7 @@ div.stats-board {
   border: 2px solid gray;
   color: white;
   font-size: 20px;
-  padding: 8px;
+  padding: var(--header-padding);
   font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -205,8 +212,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 50px;
-  padding: 0 16px;
+  padding: 8px;
   color: white;
   border-bottom: solid 1px rgb(58, 58, 68);
 }
@@ -244,6 +250,112 @@ div.title {
 }
 .close:after {
   transform: rotate(-45deg);
+}
+
+.blocks {
+  z-index: 100;
+  width: calc(5 * var(--block-size) + 4 * var(--block-space));
+  height: var(--block-size);
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* Styles for both the clickable and text blocks. */
+.block,
+.block-text {
+  background-color: #121213;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 2px solid rgba(169, 169, 169, 0.4);;
+  font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: bold;
+  color: white;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Styles for just the clickable blocks. */
+.block {
+  height: var(--block-size);
+  width: var(--block-size);
+  min-width: var(--block-size);
+  font-size: 25px;
+  cursor: pointer;
+  position: absolute;
+  right: calc(4 * var(--block-size) + 4 * var(--block-space));
+  transition: right var(--slide-time) var(--trans-type);
+}
+
+/* Styles for just the text blocks. */
+.block-text {
+  height: var(--block-text-size);
+  width: var(--block-text-size);
+  min-width: var(--block-text-size);
+  font-size: 23px;
+  position: absolute;
+  right: calc(4 * var(--block-text-size) + 4 * var(--block-text-space));
+  transition: right var(--slide-time) var(--trans-type);
+}
+
+.block-text-container {
+  display: flex;
+  position: relative;
+  justify-content: space-between;
+  align-items: center;
+  width: calc(5 * var(--block-text-size) + 4 * var(--block-text-space));
+  height: var(--block-text-size);
+  margin-bottom: var(--block-text-space);
+  margin-right: 0;
+}
+
+.block.five.slide,
+.block-text.five.slide {
+  right: 0px;
+}
+
+.menu-left {
+  width: 0;
+  height: calc(100vh - 87px);
+  transition: width var(--slide-time) var(--trans-type);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: absolute;
+  left: var(--header-padding);
+  top: calc(3 * var(--header-padding) + var(--block-size) + 1px);
+}
+
+.block.four.slide {
+  right: calc(var(--block-size) + var(--block-space));
+}
+
+.block-text.four.slide {
+  right: calc(var(--block-text-size) + var(--block-text-space));
+}
+
+.block.three.slide {
+  right: calc(2 * var(--block-size) + 2 * var(--block-space));
+}
+
+.block-text.three.slide {
+  right: calc(2 * var(--block-text-size) + 2 * var(--block-text-space));
+}
+
+.block.two.slide {
+  right: calc(3 * var(--block-size) + 3 * var(--block-space));
+}
+
+.block-text.two.slide {
+  right: calc(3 * var(--block-text-size) + 3 * var(--block-text-space));
+}
+
+.menu-left.slide {
+  width: calc(5 * var(--block-size) + 4 * var(--block-space));
 }
 
 @keyframes blur {
