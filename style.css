@@ -358,6 +358,17 @@ div.title {
   width: calc(5 * var(--block-size) + 4 * var(--block-space));
 }
 
+/* Media query to hide the word suggestions menu. */
+@media only screen and (max-width: 900px) {
+  .menu-left {
+    display: none;
+    visibility: hidden;
+  }
+  .blocks {
+    visibility: hidden;
+  }
+}
+
 @keyframes blur {
   0% {
     filter: brightness(100%);
