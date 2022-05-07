@@ -11,6 +11,7 @@
   --slide-time: 600ms;
   --trans-type: ease;
   --header-padding: 8px;
+  color-scheme: dark;
 }
 
 @font-face {
