@@ -24,6 +24,9 @@ TILE_BOUNCE_TIME = 100;
 BOARD_ROWS = 6;
 BOARD_COLUMNS = 5;
 
+// The maximum number of suggested words shown per page of results.
+MAX_SUGGESTED_WORDS = 100;
+
 // Matrix storing the color states for each tile.
 var tiles = '';
 var tileStates = [
@@ -114,64 +117,17 @@ function handleKeydown(e) {
     // Handles typing of lowercase letters.
     if(key.charCodeAt(0) >= 97 && key.charCodeAt(0) <= 122 && typingEnabled) {
 
-        // User can only enter 5 characters per row.
-        if(currCol < BOARD_COLUMNS) {
+        // Call the function for adding a letter.
+        addLetter(key.toUpperCase());
 
-            // Add the character to the currentWordEntered string.
-            currentWordEntered += key.toUpperCase();
-
-            // Add the character to the current (row, col) tile, adding
-            // pulse effect ('type' class) and border ('has-letter' class).
-            $(`#${currRow}${currCol}`).text(key.toUpperCase());
-            $(`#${currRow}${currCol}`).addClass("type");
-            $(`#${currRow}${currCol}`).addClass("has-letter");
-
-            // Allow time to show pulse animation before setting timeout
-            // to remove the pulse effect ('type' class).
-            
-            // Use the current row and column to determine which tile to remove the 
-            // 'type' class from. Row and column must be saved into different variables
-            // since both of them may change before the timeout function is invoked.
-            var storedRow = currRow;
-            var storedCol = currCol;
-            setTimeout(function() {
-                $(`#${storedRow}${storedCol}`).removeClass("type");
-            }, PULSE_LENGTH);
-
-            // Should overwrite the suggested letter in the current tile, if any.
-            if(currRow > 0) {
-                $(`#${currRow}${currCol}`).removeClass("suggestion");
-            }
-
-            // Increment the current editable column by 1.
-            currCol += 1;
-        }
     }
 
     // Handles typing of backspace.
     if(key == 'Backspace' && typingEnabled) {
 
-        // User can only go as far back as the first column.
-        if(currCol > 0) {
+        // Remove the last letter from the current row.
+        removeLetter();
 
-            // Remove the last character from the currentWordEntered string.
-            currentWordEntered = currentWordEntered.substring(0, currentWordEntered.length - 1);
-
-            // Move our current column back to the last typed letter.
-            currCol -=1;
-
-            // Remove the border from the tile ('has-letter' class) and 
-            // delete the text content (the letter) from the current tile.
-            $(`#${currRow}${currCol}`).removeClass("has-letter");
-            $(`#${currRow}${currCol}`).text('');
-
-            // Should add the 'suggestion' class back to this tile and 
-            // redisplay any hidden suggestions when text was initially typed.
-            if(currRow > 0) {
-                $(`#${currRow}${currCol}`).addClass("suggestion");
-                $(`#${currRow}${currCol}`).text(suggestion[currCol]);
-            }
-        }
     }
 
     // Handles typing of enter.
@@ -223,6 +179,70 @@ function handleKeydown(e) {
 
 // Event handler for any user key press.
 document.addEventListener("keydown", handleKeydown);
+
+// Add a letter to the next available board tile.
+function addLetter(letter) {
+
+    // User can only enter 5 characters per row.
+    if(currCol < BOARD_COLUMNS) {
+
+        // Add the character to the currentWordEntered string.
+        currentWordEntered += letter;
+
+        // Add the character to the current (row, col) tile, adding
+        // pulse effect ('type' class) and border ('has-letter' class).
+        $(`#${currRow}${currCol}`).text(letter);
+        $(`#${currRow}${currCol}`).addClass("type");
+        $(`#${currRow}${currCol}`).addClass("has-letter");
+
+        // Allow time to show pulse animation before setting timeout
+        // to remove the pulse effect ('type' class).
+        
+        // Use the current row and column to determine which tile to remove the 
+        // 'type' class from. Row and column must be saved into different variables
+        // since both of them may change before the timeout function is invoked.
+        var storedRow = currRow;
+        var storedCol = currCol;
+        setTimeout(function() {
+            $(`#${storedRow}${storedCol}`).removeClass("type");
+        }, PULSE_LENGTH);
+
+        // Should overwrite the suggested letter in the current tile, if any.
+        if(currRow > 0) {
+            $(`#${currRow}${currCol}`).removeClass("suggestion");
+        }
+
+        // Increment the current editable column by 1.
+        currCol += 1;
+    }
+}
+
+// Remove the last letter from the current row.
+function removeLetter() {
+
+    // User can only go as far back as the first column.
+    if(currCol > 0) {
+
+        // Remove the last character from the currentWordEntered string.
+        currentWordEntered = currentWordEntered.substring(0, currentWordEntered.length - 1);
+
+        // Move our current column back to the last typed letter.
+        currCol -=1;
+
+        // Remove the border from the tile ('has-letter' class) and 
+        // delete the text content (the letter) from the current tile.
+        $(`#${currRow}${currCol}`).removeClass("has-letter");
+        $(`#${currRow}${currCol}`).text('');
+
+        // Should add the 'suggestion' class back to this tile and 
+        // redisplay any hidden suggestions when text was initially typed.
+        if(currRow > 0) {
+            $(`#${currRow}${currCol}`).addClass("suggestion");
+            $(`#${currRow}${currCol}`).text(suggestion[currCol]);
+        }
+    }
+
+}
 
 // Rotates all tiles for a given row in sequence from left to right.
 function rotateTiles(row) {
@@ -349,7 +369,7 @@ function processInput(currRow) {
 
     // Should wait until rotation completes to display next suggestion.
     setTimeout(() => {
-        displaySuggestion(currRow + 1);
+        displaySuggestion(currRow + 1, ranks);
     }, BOARD_ROWS * ROTATION_DELAY);
 
     // Should wait until suggestions appears to determine if the puzzle is complete.
@@ -374,7 +394,7 @@ function processInput(currRow) {
 }
 
 // Display the stored suggestion on the next row of the game board.
-function displaySuggestion(rowToDisplay) {
+function displaySuggestion(rowToDisplay, ranks=null) {
 
     // Add the suggested letter after the SUGGESTION_DELAY for each tile.
     setTimeout(() => {
@@ -400,6 +420,10 @@ function displaySuggestion(rowToDisplay) {
     setTimeout(() => {
         $(`#${rowToDisplay}5`).text(suggestion[5]);
         $(`#${rowToDisplay}5`).addClass("suggestion");
+
+        // Modify the list of suggested words in the left menu.
+        updateMenuList(ranks);
+
     }, 5 * SUGGESTION_DELAY);
 
 }
@@ -687,3 +711,41 @@ function colorSolution(row) {
     }, 4 * SUGGESTION_DELAY);
 
 }
+
+// Updates the list of words in the left suggestion menu.
+function updateMenuList() {
+
+    // Get the necessary references.
+    var menu = $('.menu-left');
+    var newElement = '';
+
+    // Only add the slide class if the menu is slid open already.
+    var slide = menu.hasClass('slide') ? 'slide type' : '';
+
+    // Remove all words from the menu.
+    menu.children().remove();
+
+    // Append a new child for each suggestion.
+    var remainingWords = MAX_SUGGESTED_WORDS;
+    for(var i = 0; i < ranks.length && remainingWords > 0; i++, remainingWords--) {
+        newElement = `<div class="block-text-container">
+            <div class="block-text five ` + slide + `" style="animation-delay: ` + (i + 5) * 55 + `ms">` + ranks[i][0][4] + `</div>
+            <div class="block-text four ` + slide + `" style="animation-delay: ` + (i + 4) * 55 + `ms">` + ranks[i][0][3] + `</div>
+            <div class="block-text three ` + slide + `" style="animation-delay: ` + (i + 3) * 55 + `ms">` + ranks[i][0][2] + `</div>
+            <div class="block-text two ` + slide + `" style="animation-delay: ` + (i + 2) * 55 + `ms">` + ranks[i][0][1] + `</div>
+            <div class="block-text one ` + slide + `" style="animation-delay: ` + (i + 1) * 55 + `ms">` + ranks[i][0][0] + `</div>
+        </div>`;
+        menu.append(newElement);
+    }
+}
+
+// New JQuery function to determine if an element is in the viewport.
+$.fn.isInViewport = function() {
+    var elementTop = $(this).offset().top;
+    var elementBottom = elementTop + $(this).outerHeight();
+
+    var viewportTop = $(window).scrollTop();
+    var viewportBottom = viewportTop + $(window).height();
+
+    return elementBottom > viewportTop && elementTop < viewportBottom;
+};
