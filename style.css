@@ -193,7 +193,8 @@ div.tile.rotate {
   animation: rotate var(--rotation-length) linear;
 }
 
-div.tile.type {
+div.tile.type,
+div.block-text.type {
   animation: type var(--pulse-length) linear;
 }
 

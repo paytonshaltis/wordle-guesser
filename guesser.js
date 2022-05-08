@@ -720,7 +720,7 @@ function updateMenuList() {
     var newElement = '';
 
     // Only add the slide class if the menu is slid open already.
-    var slide = menu.hasClass('slide') ? 'slide' : '';
+    var slide = menu.hasClass('slide') ? 'slide type' : '';
 
     // Remove all words from the menu.
     menu.children().remove();
@@ -729,11 +729,11 @@ function updateMenuList() {
     var remainingWords = MAX_SUGGESTED_WORDS;
     for(var i = 0; i < ranks.length && remainingWords > 0; i++, remainingWords--) {
         newElement = `<div class="block-text-container">
-            <div class="block-text five ` + slide + `">` + ranks[i][0][4] + `</div>
-            <div class="block-text four ` + slide + `">` + ranks[i][0][3] + `</div>
-            <div class="block-text three ` + slide + `">` + ranks[i][0][2] + `</div>
-            <div class="block-text two ` + slide + `">` + ranks[i][0][1] + `</div>
-            <div class="block-text one ` + slide + `">` + ranks[i][0][0] + `</div>
+            <div class="block-text five ` + slide + `" style="animation-delay: ` + (i + 5) * 55 + `ms">` + ranks[i][0][4] + `</div>
+            <div class="block-text four ` + slide + `" style="animation-delay: ` + (i + 4) * 55 + `ms">` + ranks[i][0][3] + `</div>
+            <div class="block-text three ` + slide + `" style="animation-delay: ` + (i + 3) * 55 + `ms">` + ranks[i][0][2] + `</div>
+            <div class="block-text two ` + slide + `" style="animation-delay: ` + (i + 2) * 55 + `ms">` + ranks[i][0][1] + `</div>
+            <div class="block-text one ` + slide + `" style="animation-delay: ` + (i + 1) * 55 + `ms">` + ranks[i][0][0] + `</div>
         </div>`;
         menu.append(newElement);
     }
