@@ -270,10 +270,11 @@ div.title {
   display: grid;
   place-items: center;
   box-sizing: border-box;
-  border: 2px solid rgba(169, 169, 169, 0.4);;
+  border: 2px solid rgba(169, 169, 169, 0.4);
   font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
   font-weight: bold;
   color: white;
+  cursor: pointer;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
