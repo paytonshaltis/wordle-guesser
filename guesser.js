@@ -117,64 +117,17 @@ function handleKeydown(e) {
     // Handles typing of lowercase letters.
     if(key.charCodeAt(0) >= 97 && key.charCodeAt(0) <= 122 && typingEnabled) {
 
-        // User can only enter 5 characters per row.
-        if(currCol < BOARD_COLUMNS) {
+        // Call the function for adding a letter.
+        addLetter(key.toUpperCase());
 
-            // Add the character to the currentWordEntered string.
-            currentWordEntered += key.toUpperCase();
-
-            // Add the character to the current (row, col) tile, adding
-            // pulse effect ('type' class) and border ('has-letter' class).
-            $(`#${currRow}${currCol}`).text(key.toUpperCase());
-            $(`#${currRow}${currCol}`).addClass("type");
-            $(`#${currRow}${currCol}`).addClass("has-letter");
-
-            // Allow time to show pulse animation before setting timeout
-            // to remove the pulse effect ('type' class).
-            
-            // Use the current row and column to determine which tile to remove the 
-            // 'type' class from. Row and column must be saved into different variables
-            // since both of them may change before the timeout function is invoked.
-            var storedRow = currRow;
-            var storedCol = currCol;
-            setTimeout(function() {
-                $(`#${storedRow}${storedCol}`).removeClass("type");
-            }, PULSE_LENGTH);
-
-            // Should overwrite the suggested letter in the current tile, if any.
-            if(currRow > 0) {
-                $(`#${currRow}${currCol}`).removeClass("suggestion");
-            }
-
-            // Increment the current editable column by 1.
-            currCol += 1;
-        }
     }
 
     // Handles typing of backspace.
     if(key == 'Backspace' && typingEnabled) {
 
-        // User can only go as far back as the first column.
-        if(currCol > 0) {
+        // Remove the last letter from the current row.
+        removeLetter();
 
-            // Remove the last character from the currentWordEntered string.
-            currentWordEntered = currentWordEntered.substring(0, currentWordEntered.length - 1);
-
-            // Move our current column back to the last typed letter.
-            currCol -=1;
-
-            // Remove the border from the tile ('has-letter' class) and 
-            // delete the text content (the letter) from the current tile.
-            $(`#${currRow}${currCol}`).removeClass("has-letter");
-            $(`#${currRow}${currCol}`).text('');
-
-            // Should add the 'suggestion' class back to this tile and 
-            // redisplay any hidden suggestions when text was initially typed.
-            if(currRow > 0) {
-                $(`#${currRow}${currCol}`).addClass("suggestion");
-                $(`#${currRow}${currCol}`).text(suggestion[currCol]);
-            }
-        }
     }
 
     // Handles typing of enter.
@@ -226,6 +179,70 @@ function handleKeydown(e) {
 
 // Event handler for any user key press.
 document.addEventListener("keydown", handleKeydown);
+
+// Add a letter to the next available board tile.
+function addLetter(letter) {
+
+    // User can only enter 5 characters per row.
+    if(currCol < BOARD_COLUMNS) {
+
+        // Add the character to the currentWordEntered string.
+        currentWordEntered += letter;
+
+        // Add the character to the current (row, col) tile, adding
+        // pulse effect ('type' class) and border ('has-letter' class).
+        $(`#${currRow}${currCol}`).text(letter);
+        $(`#${currRow}${currCol}`).addClass("type");
+        $(`#${currRow}${currCol}`).addClass("has-letter");
+
+        // Allow time to show pulse animation before setting timeout
+        // to remove the pulse effect ('type' class).
+        
+        // Use the current row and column to determine which tile to remove the 
+        // 'type' class from. Row and column must be saved into different variables
+        // since both of them may change before the timeout function is invoked.
+        var storedRow = currRow;
+        var storedCol = currCol;
+        setTimeout(function() {
+            $(`#${storedRow}${storedCol}`).removeClass("type");
+        }, PULSE_LENGTH);
+
+        // Should overwrite the suggested letter in the current tile, if any.
+        if(currRow > 0) {
+            $(`#${currRow}${currCol}`).removeClass("suggestion");
+        }
+
+        // Increment the current editable column by 1.
+        currCol += 1;
+    }
+}
+
+// Remove the last letter from the current row.
+function removeLetter() {
+
+    // User can only go as far back as the first column.
+    if(currCol > 0) {
+
+        // Remove the last character from the currentWordEntered string.
+        currentWordEntered = currentWordEntered.substring(0, currentWordEntered.length - 1);
+
+        // Move our current column back to the last typed letter.
+        currCol -=1;
+
+        // Remove the border from the tile ('has-letter' class) and 
+        // delete the text content (the letter) from the current tile.
+        $(`#${currRow}${currCol}`).removeClass("has-letter");
+        $(`#${currRow}${currCol}`).text('');
+
+        // Should add the 'suggestion' class back to this tile and 
+        // redisplay any hidden suggestions when text was initially typed.
+        if(currRow > 0) {
+            $(`#${currRow}${currCol}`).addClass("suggestion");
+            $(`#${currRow}${currCol}`).text(suggestion[currCol]);
+        }
+    }
+
+}
 
 // Rotates all tiles for a given row in sequence from left to right.
 function rotateTiles(row) {

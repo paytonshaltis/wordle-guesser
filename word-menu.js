@@ -1,5 +1,6 @@
 // Expand the blocks on click.
 $('.blocks').click( (e) => {
+  console.log('top working');
   // Only proceed if the user clicked on a block.
   if($(e.target).hasClass('block')) {
     var menu = $('.menu-left');
@@ -40,4 +41,31 @@ $('.blocks').click( (e) => {
       $('.block-text.two').addClass('slide');
     }
   }
+});
+
+// Click on a suggested word to put it on the board.
+$(document).click( (e) => {
+
+  // Only proceed if the user clicked on a block text container.
+  if($(e.target).hasClass('block-text')) {
+  console.log('bottom working');
+    
+    // Store the word from this row of blocks.
+    var word = '';
+    $(e.target).parent('.block-text-container').children().toArray().forEach( (item, index) => {
+      word = $(item).html() + word;
+    });
+
+    // Remove all letters currently on the board.
+    for(var i = 0; i < 5; i++) {
+      removeLetter();
+    }
+
+    // Put this word into the current row of the gameboard.
+    for(var i = 0; i < word.length; i++) {
+      addLetter(word[i]);
+    }
+
+  }
+
 });
